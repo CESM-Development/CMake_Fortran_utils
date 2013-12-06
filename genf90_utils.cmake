@@ -37,12 +37,12 @@ endif()
 function(process_genf90_source_list genf90_file_list output_directory
     fortran_list_name)
 
-  # If a file is a relative path, guess that it is in the current source
-  # directory.
-  expand_relative_paths("${genf90_file_list}" ${CMAKE_CURRENT_SOURCE_DIR}
-    genf90_file_list)
-
   foreach(genf90_file IN LISTS genf90_file_list)
+
+    # If a file is a relative path, expand it (relative to current source
+    # directory.
+    get_filename_component(genf90_file "${genf90_file}" ABSOLUTE)
+
     # Get extensionless base name from input.
     get_filename_component(genf90_file_stripped "${genf90_file}" NAME_WE)
 
