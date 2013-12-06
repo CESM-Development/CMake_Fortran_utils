@@ -1,7 +1,10 @@
 # Utilities for using pFUnit's preprocessor and provided driver file.
 
-# In most cases, the only function needed will be add_pFUnit_executable,
-# defined at the end.
+# In most cases, the only build function needed will be
+# add_pFUnit_executable, defined at the end.
+
+# Additionally, define_pFUnit_failure can be used to inform CTest about how
+# to detect whether a pFUnit test has failed.
 
 # Notify CMake that a given Fortran file can be produced by preprocessing a
 # pFUnit file.
@@ -11,32 +14,33 @@ function(preprocess_pf_suite pf_file fortran_file)
     COMMAND python ${PFUNIT_PARSER} ${pf_file} ${fortran_file}
     MAIN_DEPENDENCY ${pf_file})
 
-  set_source_files_properties(${fortran_file} PROPERTIES GENERATED 1)
-
 endfunction(preprocess_pf_suite)
 
 # This function manages most of the work involved in preprocessing pFUnit
-# files. You provide absolute paths to every *.pf file for a given
-# executable, an output directory where generated sources should be output,
-# and a list name. It will generate the sources, and append them and the
-# pFUnit driver to the named list.
+# files. You provide every *.pf file for a given executable, an output
+# directory where generated sources should be output, and a list name. It
+# will generate the sources, and append them and the pFUnit driver to the
+# named list.
 function(process_pFUnit_source_list pf_file_list output_directory
     fortran_list_name)
 
   foreach(pf_file IN LISTS pf_file_list)
-    # Get base name from input.
-    string(REGEX REPLACE "(.*/)" "" pf_file_basename "${pf_file}")
+
+    # If a file is a relative path, expand it (relative to current source
+    # directory.
+    get_filename_component(pf_file "${pf_file}" ABSOLUTE)
+
+    # Get extensionless base name from input.
+    get_filename_component(pf_file_stripped "${pf_file}" NAME_WE)
 
     # Add the generated Fortran files to the source list.
-    string(REGEX REPLACE "(.*)\\.pf\$" "${output_directory}\\1.F90"
-      fortran_file ${pf_file_basename})
+    set(fortran_file ${output_directory}/${pf_file_stripped}.F90)
     preprocess_pf_suite(${pf_file} ${fortran_file})
     list(APPEND ${fortran_list_name} ${fortran_file})
 
     # Add the file to testSuites.inc
-    string(REGEX REPLACE "\\.pf\$" "_suite" suite_name ${pf_file_basename})
     set(testSuites_contents
-      "${testSuites_contents}ADD_TEST_SUITE(${suite_name})\n")
+      "${testSuites_contents}ADD_TEST_SUITE(${pf_file_stripped}_suite)\n")
   endforeach()
 
   # Regenerate testSuites.inc if and only if necessary.
@@ -77,4 +81,22 @@ function(add_pFUnit_executable name pf_file_list output_directory
   set_target_properties(${name} PROPERTIES
     INCLUDE_DIRECTORIES "${includes}")
 
+  # The above lines are equivalent to:
+  #   target_include_directories(${name} PRIVATE ${output_directory})
+  # However, target_include_directories was not added until 2.8.11, and at
+  # the time of this writing, we can't depend on having such a recent
+  # version of CMake available on HPC systems.
+
 endfunction(add_pFUnit_executable)
+
+# Tells CTest what regular expressions are used to signal pass/fail from
+# pFUnit output.
+function(define_pFUnit_failure test_name)
+  # Set both pass and fail regular expressions to minimize the change that
+  # the system under test will interfere with output and cause a false
+  # negative.
+  set_tests_properties(${test_name} PROPERTIES
+      FAIL_REGULAR_EXPRESSION "FAILURES!!!")
+  set_tests_properties(${test_name} PROPERTIES
+      PASS_REGULAR_EXPRESSION "OK")
+endfunction(define_pFUnit_failure)

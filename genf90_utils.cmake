@@ -17,7 +17,9 @@ if(ENABLE_GENF90)
       COMMAND ${GENF90} ${genf90_file} >${fortran_file}
       MAIN_DEPENDENCY ${genf90_file})
 
-    set_source_files_properties(${fortran_file} PROPERTIES GENERATED 1)
+    get_filename_component(stripped_name ${fortran_file} NAME_WE)
+
+    add_custom_target(generate_${stripped_name} DEPENDS ${fortran_file})
 
   endfunction(preprocess_genf90_template)
 
@@ -35,13 +37,17 @@ endif()
 function(process_genf90_source_list genf90_file_list output_directory
     fortran_list_name)
 
+  # If a file is a relative path, guess that it is in the current source
+  # directory.
+  expand_relative_paths("${genf90_file_list}" ${CMAKE_CURRENT_SOURCE_DIR}
+    genf90_file_list)
+
   foreach(genf90_file IN LISTS genf90_file_list)
-    # Get base name from input.
-    string(REGEX REPLACE "(.*/)" "" genf90_file_basename "${genf90_file}")
+    # Get extensionless base name from input.
+    get_filename_component(genf90_file_stripped "${genf90_file}" NAME_WE)
 
     # Add generated file to the test list.
-    string(REGEX REPLACE "(.*)\\.F90\\.in\$" "${output_directory}/\\1.F90"
-      fortran_file ${genf90_file_basename})
+    set(fortran_file ${output_directory}/${genf90_file_stripped}.F90)
     preprocess_genf90_template(${genf90_file} ${fortran_file})
     list(APPEND ${fortran_list_name} ${fortran_file})
   endforeach()
