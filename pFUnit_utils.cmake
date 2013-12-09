@@ -92,7 +92,7 @@ endfunction(add_pFUnit_executable)
 # Tells CTest what regular expressions are used to signal pass/fail from
 # pFUnit output.
 function(define_pFUnit_failure test_name)
-  # Set both pass and fail regular expressions to minimize the change that
+  # Set both pass and fail regular expressions to minimize the chance that
   # the system under test will interfere with output and cause a false
   # negative.
   set_tests_properties(${test_name} PROPERTIES
