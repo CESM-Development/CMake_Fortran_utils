@@ -1,9 +1,0 @@
-Originator: jedwards
-Date: Dec 11, 2013
-Model:CMake_Fortran_utils 
-Version: CMake_Fortran_utils_131211
-One-line summary: allow to build without NETCDF
-
-M  FindNETCDF.cmake
-M  TryNC4.f90
-
