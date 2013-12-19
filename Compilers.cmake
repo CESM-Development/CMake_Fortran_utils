@@ -33,18 +33,7 @@
 # Add new build types.
 #=================================================
 
-# This file defines a "HARSH" build type that uses stricter flags than
-# the CESM DEBUG flags. Boilerplate to do this is shamelessly copied and
-# modified from the CMake wiki below.
-set(CMAKE_Fortran_FLAGS_HARSH "" CACHE STRING
-  "Flags used by the Fortran compiler during harsh builds."
-  FORCE)
-set(CMAKE_C_FLAGS_HARSH "" CACHE STRING
-  "Flags used by the C compiler during harsh builds."
-  FORCE)
-mark_as_advanced(CMAKE_Fortran_FLAGS_HARSH CMAKE_C_FLAGS_HARSH)
-
-# Add CESM flags as well.
+# Add CESM build types.
 set(CMAKE_Fortran_FLAGS_CESM "" CACHE STRING
   "Flags used by the Fortran compiler during CESM builds."
   FORCE)
@@ -62,7 +51,7 @@ set(CMAKE_C_FLAGS_CESM_DEBUG "" CACHE STRING
 mark_as_advanced(CMAKE_Fortran_FLAGS_CESM_DEBUG CMAKE_C_FLAGS_CESM_DEBUG)
 
 set(all_build_types
-  "None Debug Release RelWithDebInfo MinSizeRel HARSH CESM CESM_DEBUG")
+  "None Debug Release RelWithDebInfo MinSizeRel CESM CESM_DEBUG")
 set(CMAKE_BUILD_TYPE "${CMAKE_BUILD_TYPE}" CACHE STRING
   "Choose the type of build, options are: ${all_build_types}."
   FORCE)
@@ -128,7 +117,7 @@ if(${CMAKE_Fortran_COMPILER_ID} STREQUAL Intel)
 endif()
 
 #=================================================
-# Add flags for debugging output and "harsh" builds.
+# Add flags for debugging output.
 #=================================================
 
 # Define Fortran compiler flags.
@@ -138,62 +127,31 @@ endif()
 # generated binary, because we want to be able to get binaries that
 # resemble what you get from the CESM flags.
 
-# Also define flags for the HARSH mode. These flags are explained in the
-# comments.
-
 if(${CMAKE_Fortran_COMPILER_ID} STREQUAL NAG)
   add_flags(CMAKE_Fortran_FLAGS -strict95)
   if(USE_COLOR)
     add_flags(CMAKE_Fortran_FLAGS -colour)
   endif()
 
-  # Add kind=byte if it isn't anywhere else.
+  # Add -kind=byte if it isn't anywhere else.
   if(NOT "${CMAKE_Fortran_FLAGS_${CMAKE_BUILD_TYPE}}" MATCHES -kind=byte)
     add_flags(CMAKE_Fortran_FLAGS -kind=byte)
   endif()
 
-  # Add -gline to harsh flags to help debugging.
-  # Add -C=all for NAG's own checks.
-  # Add -ieee=stop to trap floating point exceptions
-  # Add -nan to set all reals to signaling NaN at initialization.
-  # Add -u to detect implicitly declared variables.
-  add_flags(CMAKE_Fortran_FLAGS_HARSH -gline -C=all -ieee=stop)
-  add_flags(CMAKE_Fortran_FLAGS_HARSH -nan -u)
 elseif(${CMAKE_Fortran_COMPILER_ID} STREQUAL GNU)
   # Turn on warnings, but leave out uninitialized check as it was producing
   # a lot of false positives.
   add_flags(CMAKE_Fortran_FLAGS -Wall -Wextra -Wno-uninitialized)
 
-  # Harsh flags
-  # -fno-common to "harsh" flags to find portability issues.
-  # -ftrapv to trap integer overflow.
-  # -ffpe-trap to trap floating point exceptions.
-  # -fcheck=all to turn on all checks.
-  # -finit-real=snan initializes reals to signaling NaN.
-  # -fdefault-integer-8 and -fdefault-real-8 are auto-promotion flags; this
-  #       might catch code assuming certain default sizes.
-  add_flags(CMAKE_C_FLAGS_HARSH -fno-common -ftrapv
-    -ffpe-trap=invalid,zero,overflow -fcheck=all -finit-real=snan
-    -fdefault-integer-8 -fdefault-real-8)
 elseif(${CMAKE_Fortran_COMPILER_ID} STREQUAL XL)
 elseif(${CMAKE_Fortran_COMPILER_ID} STREQUAL Intel)
-  # Add -check all to turn on all checks.
-  # Add -traceback to help debugging.
-  add_flags(CMAKE_Fortran_FLAGS_HARSH -check all -traceback)
 endif()
 
-# Define universal/harsh C flags, analogous to the above Fortran block.
+# Define C flags, analogous to the above Fortran block.
 
 if(${CMAKE_C_COMPILER_ID} STREQUAL GNU)
   add_flags(CMAKE_C_FLAGS -Wall -Wextra -pedantic)
-  # Add -fno-common to "harsh" flags to find portability issues.
-  # Add -ftrapv to trap integer overflow.
-  add_flags(CMAKE_C_FLAGS_HARSH -fno-common -ftrapv)
 endif()
-
-# Turn on debug output for harsh mode
-add_flags(CMAKE_Fortran_FLAGS_HARSH -g)
-add_flags(CMAKE_C_FLAGS_HARSH -g)
 
 #=================================================
 # Help CTest tests recognize when "stop X" is called with non-zero X.
