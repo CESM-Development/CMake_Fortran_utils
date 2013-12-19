@@ -1,11 +1,45 @@
-# Utilities for invoking genf90 on a template file.
+# Utility for invoking genf90 on a template file.
+#
+# If ENABLE_GENF90 is set to a true value, the functions here will behave
+# as described below. In this case, the variable GENF90 must be defined and
+# contain the genf90.pl command.
+#
+# If ENABLE_GENF90 is not true, no source code generation or other side
+# effects will occur, but output variables will be set as if the generation
+# had occurred.
+#
+#==========================================================================
+#
+# process_genf90_source_list
+#
+# Arguments:
+#    genf90_file_list - A list of template files to process.
+#    output_directory - Directory where generated sources will be placed.
+#    fortran_list_name - The name of a list used as output.
+#
+# Produces generated sources for each of the input templates. Then
+# this function *appends* the location of each generated file to the output
+# list.
+#
+# As a side effect, this function will add a target for each generated
+# file. For a generated file named "foo.F90", the target will be named
+# "generate_foo".
+#
+# Limitations:
+#    This function adds targets to work around a deficiency in CMake (see
+#    "declare_generated_dependencies" in Sourcelist_utils). Unfortunately,
+#    this means that you cannot use this function to generate two files
+#    with the same name in a single project.
+#
+#==========================================================================
 
-# If ENABLE_GENF90 is set to a true value, the functions here will actually
-# inform CMake to invoke genf90 to generate the sources.
-
-# If ENABLE_GENF90 is not true, the functions here not generate source
-# code, but process_genf90_source_list will still return the generated file
-# names that would have been used.
+#==========================================================================
+# Copyright (c) 2013, University Corporation for Atmospheric Research
+#
+# This software is distributed under a two-clause BSD license, with no
+# warranties, express or implied. See the accompanying LICENSE file for
+# details.
+#==========================================================================
 
 if(ENABLE_GENF90)
 
@@ -31,9 +65,7 @@ else()
 
 endif()
 
-# Given a list of genf90 templates, an output directory for generated
-# sources, and the name of a source list, tells CMake to generate sources
-# if necessary, and adds those sources to the list.
+# Auto-generate source names.
 function(process_genf90_source_list genf90_file_list output_directory
     fortran_list_name)
 

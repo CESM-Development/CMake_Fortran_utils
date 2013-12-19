@@ -1,14 +1,26 @@
 # Find module for pFUnit
 #
-# Sets the typical variables:
+# For this module to work, either the pFUnit parser must be discoverable
+# (e.g. in the user's PATH), or else the environment variable "PFUNIT" must
+# be defined, and point to the root directory for the PFUNIT installation.
+#
+# This module sets some typical variables:
 # PFUNIT_FOUND
 # PFUNIT_LIBRARY(/LIBRARIES)
 # PFUNIT_INCLUDE_DIR(/DIRS)
 #
-# Also sets:
-# PFUNIT_DRIVER
-# PFUNIT_MODULE_DIR
-# PFUNIT_PARSER
+# The module also sets:
+# PFUNIT_DRIVER - Path to the pFUnit driver source.
+# PFUNIT_MODULE_DIR - Directory containing pFUnit's module files.
+# PFUNIT_PARSER - Path to pFUnitParser.py (the preprocessor).
+
+#==========================================================================
+# Copyright (c) 2013, University Corporation for Atmospheric Research
+#
+# This software is distributed under a two-clause BSD license, with no
+# warranties, express or implied. See the accompanying LICENSE file for
+# details.
+#==========================================================================
 
 include(FindPackageHandleStandardArgs)
 

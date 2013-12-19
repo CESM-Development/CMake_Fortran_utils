@@ -1,10 +1,47 @@
 # Utilities for using pFUnit's preprocessor and provided driver file.
+#
+# This module relies upon the variables defined by the FindpFUnit module.
+#
+#==========================================================================
+#
+# add_pFUnit_executable
+#
+# Arguments:
+#    name - Name of the executable to add.
+#    pf_file_list - List of .pf files to process.
+#    output_directory - Directory where generated sources will be placed.
+#    fortran_source_list - List of Fortran files to include.
+#
+# Preprocesses the input .pf files to create test suites, then creates an
+# executable that drives those suites with the pFUnit driver.
+#
+# Limitations:
+#    add_pFUnit_executable cannot currently handle cases where the user
+#    choses to do certain things "manually", such as:
+#
+#     - Test suites written in normal Fortran (not .pf) files.
+#     - User-specified testSuites.inc
+#     - User-specified driver file in fortran_source_list.
+#
+#==========================================================================
+#
+# define_pFUnit_failure
+#
+# Arguments:
+#    test_name - Name of a CTest test.
+#
+# Defines FAIL_REGULAR_EXPRESSION and PASS_REGULAR_EXPRESSION for the given
+# test, so that pFUnit's overall pass/fail status can be detected.
+#
+#==========================================================================
 
-# In most cases, the only build function needed will be
-# add_pFUnit_executable, defined at the end.
-
-# Additionally, define_pFUnit_failure can be used to inform CTest about how
-# to detect whether a pFUnit test has failed.
+#==========================================================================
+# Copyright (c) 2013, University Corporation for Atmospheric Research
+#
+# This software is distributed under a two-clause BSD license, with no
+# warranties, express or implied. See the accompanying LICENSE file for
+# details.
+#==========================================================================
 
 # Notify CMake that a given Fortran file can be produced by preprocessing a
 # pFUnit file.

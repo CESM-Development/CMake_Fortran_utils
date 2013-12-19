@@ -1,4 +1,33 @@
 # Flags for builds with different machines/compilers.
+#
+# This module is currently a catch-all for compiler-specific functionality
+# needed by CESM. It defines OS and compiler CPP macros and CESM build
+# types, as well as including the file containing CESM compiler flags, if
+# necessary.
+#
+# There is also one function intended for CTest test writers, described
+# below.
+#
+#==========================================================================
+#
+# define_Fortran_stop_failure
+#
+# Arguments:
+#    test_name - Name of a CTest test.
+#
+# Ensures that if the named test uses "STOP 1" to signal failure, that this
+# is detected by CTest. Currently this is only necessary for NAG, which
+# prints the stop code rather than using it as an error code.
+#
+#==========================================================================
+
+#==========================================================================
+# Copyright (c) 2013, University Corporation for Atmospheric Research
+#
+# This software is distributed under a two-clause BSD license, with no
+# warranties, express or implied. See the accompanying LICENSE file for
+# details.
+#==========================================================================
 
 #=================================================
 # Add new build types.

@@ -1,4 +1,16 @@
 # Module used for CESM testing.
+#
+# This module contains statements that would otherwise be boilerplate in
+# most CESM tests. It enables CTest testing, handles the USE_COLOR and
+# ENABLE_GENF90 arguments, and includes several other modules.
+
+#==========================================================================
+# Copyright (c) 2013, University Corporation for Atmospheric Research
+#
+# This software is distributed under a two-clause BSD license, with no
+# warranties, express or implied. See the accompanying LICENSE file for
+# details.
+#==========================================================================
 
 #=================================================
 # Enable CTest tests.
