@@ -114,6 +114,9 @@ function(add_pFUnit_executable name pf_file_list output_directory
 
   # Necessary to include testSuites.inc
   get_target_property(includes ${name} INCLUDE_DIRECTORIES)
+  if(NOT includes)
+    unset(includes)
+  endif() 
   list(APPEND includes ${output_directory} "${PFUNIT_INCLUDE_DIRS}")
   set_target_properties(${name} PROPERTIES
     INCLUDE_DIRECTORIES "${includes}")
