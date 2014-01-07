@@ -16,15 +16,18 @@ ELSE ()
                HINTS ${PNETCDF_DIR}/lib)
 ENDIF ()
 
+find_file( PNETCDFTEST NAMES TryPnetcdf_mod.f90  PATHS ${CMAKE_MODULE_PATH} NO_DEFAULT_PATH)
+get_filename_component( CMAKE_TEST_PATH ${PNETCDFTEST} PATH)
+
 TRY_COMPILE(PNETCDF_MOD  ${CMAKE_CURRENT_BINARY_DIR}/tryPnetcdf_mod
-                          ${CMAKE_CURRENT_SOURCE_DIR}/cmake/TryPnetcdf_mod.f90
+                          ${CMAKE_TEST_PATH}/TryPnetcdf_mod.f90
 			  COMPILE_DEFINITIONS -I${PNETCDF_INCLUDE_DIR}
 			  CMAKE_FLAGS "-DLINK_LIBRARIES:STRING=${PNETCDF_LIBRARIES}"
                            OUTPUT_VARIABLE Pnet_OUT)
 
 if(NOT PNETCDF_MOD)
   TRY_COMPILE(PNETCDF_INC  ${CMAKE_CURRENT_BINARY_DIR}/tryPnetcdf_inc
-                          ${CMAKE_CURRENT_SOURCE_DIR}/cmake/TryPnetcdf_inc.f90
+                          ${CMAKE_TEST_PATH}/TryPnetcdf_inc.f90
 			  COMPILE_DEFINITIONS -I${PNETCDF_INCLUDE_DIR}
 			  CMAKE_FLAGS "-DLINK_LIBRARIES:STRING=${PNETCDF_LIBRARIES}"
                            OUTPUT_VARIABLE Pnet_OUT)
