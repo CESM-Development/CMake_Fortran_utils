@@ -34,6 +34,21 @@
 # test, so that pFUnit's overall pass/fail status can be detected.
 #
 #==========================================================================
+#
+# create_pFUnit_test
+#
+# Arguments:
+#    test_name - Name of a CTest test.
+#    executable_name - Name of the executable associated with this test.
+#    pf_file_list - List of .pf files to process.
+#    fortran_source_list - List of Fortran files to include.
+#
+# Does everything needed to create a pFUnit-based test, wrapping
+# add_pFUnit_executable, add_test, and define_pFUnit_failure. 
+#
+# Assumes the executable should be created in CMAKE_CURRENT_BINARY_DIR.
+#
+#==========================================================================
 
 #==========================================================================
 # Copyright (c) 2013, University Corporation for Atmospheric Research
@@ -140,3 +155,14 @@ function(define_pFUnit_failure test_name)
   set_tests_properties(${test_name} PROPERTIES
       PASS_REGULAR_EXPRESSION "OK")
 endfunction(define_pFUnit_failure)
+
+# Does everything needed to create a pFUnit-based test, wrapping
+# add_pFUnit_executable, add_test, and define_pFUnit_failure. Input
+# variables are the test name, the executable name, a list of .pf files,
+# and a list of regular Fortran files. Assumes the executable should be
+# created in CMAKE_CURRENT_BINARY_DIR.
+function(create_pFUnit_test test_name executable_name pf_file_list fortran_source_list)
+  add_pFUnit_executable(${executable_name} "${pf_file_list}" ${CMAKE_CURRENT_BINARY_DIR} "${fortran_source_list}")
+  add_test(${test_name} ${executable_name})
+  define_pFUnit_failure(${test_name})
+endfunction(create_pFUnit_test)
