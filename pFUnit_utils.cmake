@@ -46,7 +46,7 @@
 # Does everything needed to create a pFUnit-based test, wrapping
 # add_pFUnit_executable, add_test, and define_pFUnit_failure. 
 #
-# Assumes the executable should be created in CMAKE_CURRENT_BINARY_DIR.
+# Generated source files are placed in CMAKE_CURRENT_BINARY_DIR.
 #
 #==========================================================================
 
@@ -159,10 +159,15 @@ endfunction(define_pFUnit_failure)
 # Does everything needed to create a pFUnit-based test, wrapping
 # add_pFUnit_executable, add_test, and define_pFUnit_failure. Input
 # variables are the test name, the executable name, a list of .pf files,
-# and a list of regular Fortran files. Assumes the executable should be
-# created in CMAKE_CURRENT_BINARY_DIR.
-function(create_pFUnit_test test_name executable_name pf_file_list fortran_source_list)
-  add_pFUnit_executable(${executable_name} "${pf_file_list}" ${CMAKE_CURRENT_BINARY_DIR} "${fortran_source_list}")
+# and a list of regular Fortran files. Source files created from the .pf
+# files are placed in CMAKE_CURRENT_BINARY_DIR.
+function(create_pFUnit_test test_name executable_name pf_file_list
+    fortran_source_list)
+
+  add_pFUnit_executable(${executable_name} "${pf_file_list}"
+    ${CMAKE_CURRENT_BINARY_DIR} "${fortran_source_list}")
+
   add_test(${test_name} ${executable_name})
   define_pFUnit_failure(${test_name})
+
 endfunction(create_pFUnit_test)
