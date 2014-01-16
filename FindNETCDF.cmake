@@ -8,51 +8,46 @@
 find_path(NETCDF_INCLUDE_DIR netcdf.h
           HINTS ${NETCDF_DIR}/include )
 
-find_library(NETCDF_FORTRAN_LIBRARY NAMES libnetcdff.a netcdff 
-             HINTS ${NETCDF_DIR}/lib )
+find_path(NETCDF_LIB_DIR NAMES libnetcdf.a libnetcdf.so
+          HINTS ${NETCDF_DIR}/lib )
 
-find_library(NETCDF_LIBRARY NAMES  libnetcdf.a netcdf
-             HINTS ${NETCDF_DIR}/lib )
+find_path(NETCDF_FORTRAN_LIB_DIR libnetcdff.a libnetcdff.so
+          HINTS ${NETCDF_DIR}/lib )
 
-if(NETCDF_INCLUDE_DIR AND NETCDF_LIBRARY)
-  set(NETCDF_INCLUDE_DIRS ${NETCDF_INCLUDE_DIR} )
-  FIND_PACKAGE(HDF5 COMPONENTS HL C )
-  if(${HDF5_FOUND}) 
-    MESSAGE(STATUS "Adding hdf5 libraries ")
-    if(${CMAKE_Fortran_COMPILER} MATCHES ".*xlf.*")
-      MESSAGE(STATUS "Applying Bluegene hack ")
-      foreach (lib IN LISTS HDF5_LIBRARIES)
-        if(lib MATCHES ".*.a")
-          list(APPEND MY_HDF5_LIBRARIES ${lib}) 	   
-        endif()
-      endforeach()
-      set(HDF5_LIBRARIES ${MY_HDF5_LIBRARIES}) 	   
-    endif()
-   set(NETCDF_LIBRARIES ${NETCDF_FORTRAN_LIBRARY} ${NETCDF_LIBRARY} "${HDF5_LIBRARIES}")  
-  else()
-    set(NETCDF_LIBRARIES ${NETCDF_FORTRAN_LIBRARY} ${NETCDF_LIBRARY}  )  
-  endif()
+find_file(NETCDF4_PAR_H netcdf_par.h 
+          HINTS ${NETCDF_INCLUDE_DIR}
+          NO_DEFAULT_PATH )
 
-  find_file( TESTFILE NAMES TryNC4.f90 PATHS ${CMAKE_MODULE_PATH} NO_DEFAULT_PATH)
-  get_filename_component( TESTFILEPATH ${TESTFILE} PATH)
+#MESSAGE("PAR_H: ${NETCDF4_PAR_H}")
 
-
-  TRY_COMPILE(NETCDF4_PARALLEL ${CMAKE_CURRENT_BINARY_DIR}/tryNC4
-                          ${TESTFILEPATH}/TryNC4.f90
-			  CMAKE_FLAGS "-DLINK_LIBRARIES=${NETCDF_LIBRARIES}"
-                                      "-DINCLUDE_DIRECTORIES=${NETCDF_INCLUDE_DIR}"
-                           OUTPUT_VARIABLE NC4_OUT)
-  if(NETCDF4_PARALLEL)
-    MESSAGE(STATUS "netcdf4 built with parallel support ")
-  else()
-    MESSAGE("netcdf4 not built with parallel support ${NC4_OUT}")
-  endif()
+if(NOT NETCDF_FORTRAN_LIB_DIR)
+  MESSAGE("WARNING: did not find netcdf fortran library")
+  set(NETCDF_LIBRARIES "-L${NETCDF_LIB_DIR}  -lnetcdf")
+else()
+  set(NETCDF_LIBRARIES "-L${NETCDF_LIB_DIR} -lnetcdff -lnetcdf")
 endif()
+
+if(NOT NETCDF4_PAR_H)
+  set(NETCDF4_PARALLEL "no")
+  MESSAGE("NETCDF built without MPIIO")
+else()
+  set(NETCDF4_PARALLEL "yes")
+  MESSAGE("NETCDF built with hdf5 MPIIO support")
+endif()
+
+set(NETCDF_INCLUDE_DIRS ${NETCDF_INCLUDE_DIR} )
+
+FIND_PACKAGE(HDF5 COMPONENTS C HL)
+
+if(${HDF5_FOUND}) 
+  MESSAGE(STATUS "Adding hdf5 libraries ")
+ set(NETCDF_LIBRARIES ${NETCDF_LIBRARIES} ${HDF5_LIBRARIES})  
+endif()
+
 include(FindPackageHandleStandardArgs)
 # handle the QUIETLY and REQUIRED arguments and set NETCDF_FOUND to TRUE
 # if all listed variables are TRUE
-
 find_package_handle_standard_args(NETCDF  DEFAULT_MSG 
-                                  NETCDF_LIBRARY NETCDF_INCLUDE_DIR)
+                                  NETCDF_LIBRARIES NETCDF_INCLUDE_DIR)
 
-mark_as_advanced(NETCDF_INCLUDE_DIR NETCDF_LIBRARY NETCDF4_PARALLEL)
+mark_as_advanced(NETCDF_INCLUDE_DIR NETCDF_LIBRARIES NETCDF4_PARALLEL )
