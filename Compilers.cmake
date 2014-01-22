@@ -148,9 +148,10 @@ elseif(${CMAKE_Fortran_COMPILER_ID} STREQUAL Intel)
 endif()
 
 # Define C flags, analogous to the above Fortran block.
-
-if(${CMAKE_C_COMPILER_ID} STREQUAL GNU)
-  add_flags(CMAKE_C_FLAGS -Wall -Wextra -pedantic)
+if(CMAKE_C_COMPILER_LOADED)
+  if(${CMAKE_C_COMPILER_ID} STREQUAL GNU)
+    add_flags(CMAKE_C_FLAGS -Wall -Wextra -pedantic)
+  endif()
 endif()
 
 #=================================================
