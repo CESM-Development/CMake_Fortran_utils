@@ -37,16 +37,32 @@
 #
 # create_pFUnit_test
 #
-# Arguments:
+# Required arguments:
 #    test_name - Name of a CTest test.
 #    executable_name - Name of the executable associated with this test.
 #    pf_file_list - List of .pf files to process.
 #    fortran_source_list - List of Fortran files to include.
 #
+# Optional arguments, specified via keyword:
+#    GEN_OUTPUT_DIRECTORY - directory for generated source files, relative to CMAKE_CURRENT_BINARY_DIR
+#       - Defaults to CMAKE_CURRENT_BINARY_DIR
+#       - Needs to be given if you have multiple separate pFUnit tests defined in the same directory
+#    COMMAND - Command to run the pFUnit test
+#       - Defaults to executable_name
+#       - Needs to be given if you need more on the command line than just the executable
+#         name, such as an aprun command, or setting the number of threads
+#       - A multi-part command should NOT be enclosed in quotes (see example below)
+#
 # Does everything needed to create a pFUnit-based test, wrapping
 # add_pFUnit_executable, add_test, and define_pFUnit_failure. 
 #
-# Generated source files are placed in CMAKE_CURRENT_BINARY_DIR.
+# Example, using defaults for the optional arguments: 
+# create_pFUnit_test(mytest mytest_exe "${pfunit_sources}" "${test_sources}")
+#
+# Example, specifying values for the optional arguments:
+# create_pFUnit_test(mytest mytest_exe "${pfunit_sources}" "${test_sources}"
+#   GEN_OUTPUT_DIRECTORY mytest_dir
+#   COMMAND env OMP_NUM_THREADS=3 mytest_exe)
 #
 #==========================================================================
 
@@ -57,6 +73,8 @@
 # warranties, express or implied. See the accompanying LICENSE file for
 # details.
 #==========================================================================
+
+include(CMakeParseArguments)
 
 # Notify CMake that a given Fortran file can be produced by preprocessing a
 # pFUnit file.
@@ -156,18 +174,39 @@ function(define_pFUnit_failure test_name)
       PASS_REGULAR_EXPRESSION "OK")
 endfunction(define_pFUnit_failure)
 
-# Does everything needed to create a pFUnit-based test, wrapping
-# add_pFUnit_executable, add_test, and define_pFUnit_failure. Input
-# variables are the test name, the executable name, a list of .pf files,
-# and a list of regular Fortran files. Source files created from the .pf
-# files are placed in CMAKE_CURRENT_BINARY_DIR.
-function(create_pFUnit_test test_name executable_name pf_file_list
-    fortran_source_list)
+# Does everything needed to create a pFUnit-based test, wrapping add_pFUnit_executable,
+# add_test, and define_pFUnit_failure.
+#
+# Required input variables are the test name, the executable name, a list of .pf files,
+# and a list of regular Fortran files.
+#
+# Optional input variables are GEN_OUTPUT_DIRECTORY and COMMAND (see usage notes at the
+# top of this file for details).
+function(create_pFUnit_test test_name executable_name pf_file_list fortran_source_list)
 
+  # Parse optional arguments
+  set(options "")
+  set(oneValueArgs GEN_OUTPUT_DIRECTORY)
+  set(multiValueArgs COMMAND)
+  cmake_parse_arguments(MY "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  if (MY_UNPARSED_ARGUMENTS)
+    message(FATAL_ERROR "Unknown keywords given to create_pFUnit_test(): \"${MY_UNPARSED_ARGUMENTS}\"")
+  endif()
+
+  # Change GEN_OUTPUT_DIRECTORY to an absolute path, relative to CMAKE_CURRENT_BINARY_DIR
+  # Note that, if GEN_OUTPUT_DIRECTORY isn't given, this logic will make the output
+  # directory default to CMAKE_CURRENT_BINARY_DIR
+  set(MY_GEN_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${MY_GEN_OUTPUT_DIRECTORY})
+
+  # Give default values to optional arguments that aren't present
+  if (NOT MY_COMMAND)
+    set(MY_COMMAND ${executable_name})
+  endif()
+
+  # Do the work
   add_pFUnit_executable(${executable_name} "${pf_file_list}"
-    ${CMAKE_CURRENT_BINARY_DIR} "${fortran_source_list}")
-
-  add_test(${test_name} ${executable_name})
+    ${MY_GEN_OUTPUT_DIRECTORY} "${fortran_source_list}")
+  add_test(NAME ${test_name} COMMAND ${MY_COMMAND})
   define_pFUnit_failure(${test_name})
 
 endfunction(create_pFUnit_test)
