@@ -15,7 +15,7 @@
 # PFUNIT_PARSER - Path to pFUnitParser.py (the preprocessor).
 
 #==========================================================================
-# Copyright (c) 2013, University Corporation for Atmospheric Research
+# Copyright (c) 2013-2014, University Corporation for Atmospheric Research
 #
 # This software is distributed under a two-clause BSD license, with no
 # warranties, express or implied. See the accompanying LICENSE file for
