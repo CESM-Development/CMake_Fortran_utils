@@ -46,6 +46,11 @@ if(${HDF5_FOUND})
  set(NETCDF_C_LIBRARY ${NETCDF_C_LIBRARY} ${HDF5_LIBRARIES})  
 endif()
 
+# Export variables so other projects can use them as well
+#  ie. if pio is added with add_subdirectory
+SET(NETCDF_INCLUDE_DIR ${NETCDF_INCLUDE_DIR} CACHE STRING "Location of NetCDF include files.")
+SET(NETCDF_LIBRARIES ${NETCDF_LIBRARIES} CACHE STRING "Link line for NetCDF.")
+
 include(FindPackageHandleStandardArgs)
 # handle the QUIETLY and REQUIRED arguments and set NETCDF_FOUND to TRUE
 # if all listed variables are TRUE
