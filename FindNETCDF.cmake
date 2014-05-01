@@ -11,10 +11,10 @@ find_path(NETCDF_INCLUDE_DIR netcdf.h
           HINTS ${NETCDF_DIR}/include )
 
 find_path(NETCDF_LIB_DIR NAMES libnetcdf.a libnetcdf.so
-          HINTS ${NETCDF_DIR}/lib )
+          HINTS ${NETCDF_DIR}/lib ${NETCDF_DIR}/lib64 )
 
 find_path(NETCDF_FORTRAN_LIB_DIR libnetcdff.a libnetcdff.so
-          HINTS ${NETCDF_DIR}/lib )
+          HINTS ${NETCDF_DIR}/lib ${NETCDF_DIR}/lib64 )
 
 find_file(NETCDF4_PAR_H netcdf_par.h 
           HINTS ${NETCDF_INCLUDE_DIR}
