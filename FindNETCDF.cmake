@@ -21,14 +21,14 @@ find_file(NETCDF4_PAR_H netcdf_par.h
           NO_DEFAULT_PATH )
 
 #MESSAGE("PAR_H: ${NETCDF4_PAR_H}")
-set(NETCDF_C_LIBRARY "-L${NETCDF_LIB_DIR}  -lnetcdf")
+find_library(NETCDF_C_LIBRARY NAMES libnetcdf.a netcdf HINTS ${NETCDF_LIB_DIR})
 
 if(NOT NETCDF_FORTRAN_LIB_DIR)
   MESSAGE("WARNING: did not find netcdf fortran library")
 else()
-  set(NETCDF_Fortran_LIBRARY "-L${NETCDF_LIB_DIR} -lnetcdff")
+  find_library(NETCDF_Fortran_LIBRARY NAMES libnetcdff.a netcdff HINTS ${NETCDF_FORTRAN_LIB_DIR})
 endif()
-set(NETCDF_LIBRARIES "${NETCDF_Fortran_LIBRARY} ${NETCDF_C_LIBRARY}")
+set(NETCDF_LIBRARIES ${NETCDF_Fortran_LIBRARY} ${NETCDF_C_LIBRARY})
 if(NOT NETCDF4_PAR_H)
   set(NETCDF4_PARALLEL "no")
   MESSAGE("NETCDF built without MPIIO")
@@ -54,7 +54,9 @@ SET(NETCDF_LIBRARIES ${NETCDF_LIBRARIES} CACHE STRING "Link line for NetCDF.")
 include(FindPackageHandleStandardArgs)
 # handle the QUIETLY and REQUIRED arguments and set NETCDF_FOUND to TRUE
 # if all listed variables are TRUE
+# (Note that the Fortran interface is not always a separate library, so
+# don't require it to be found.)
 find_package_handle_standard_args(NETCDF  DEFAULT_MSG NETCDF_LIBRARIES
-                                  NETCDF_C_LIBRARY NETCDF_Fortran_LIBRARY NETCDF_INCLUDE_DIR)
+                                  NETCDF_C_LIBRARY NETCDF_INCLUDE_DIR)
 
 mark_as_advanced(NETCDF_INCLUDE_DIR NETCDF_LIBRARIES NETCDF_C_LIBRARY NETCDF_Fortran_LIBRARY NETCDF4_PARALLEL )
