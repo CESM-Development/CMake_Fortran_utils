@@ -30,33 +30,6 @@
 #==========================================================================
 
 #=================================================
-# Add new build types.
-#=================================================
-
-# Add CESM build types.
-set(CMAKE_Fortran_FLAGS_CESM "" CACHE STRING
-  "Flags used by the Fortran compiler during CESM builds."
-  FORCE)
-set(CMAKE_C_FLAGS_CESM "" CACHE STRING
-  "Flags used by the C compiler during CESM builds."
-  FORCE)
-mark_as_advanced(CMAKE_Fortran_FLAGS_CESM CMAKE_C_FLAGS_CESM)
-
-set(CMAKE_Fortran_FLAGS_CESM_DEBUG "" CACHE STRING
-  "Flags used by the Fortran compiler during CESM DEBUG builds."
-  FORCE)
-set(CMAKE_C_FLAGS_CESM_DEBUG "" CACHE STRING
-  "Flags used by the C compiler during CESM DEBUG builds."
-  FORCE)
-mark_as_advanced(CMAKE_Fortran_FLAGS_CESM_DEBUG CMAKE_C_FLAGS_CESM_DEBUG)
-
-set(all_build_types
-  "None Debug Release RelWithDebInfo MinSizeRel CESM CESM_DEBUG")
-set(CMAKE_BUILD_TYPE "${CMAKE_BUILD_TYPE}" CACHE STRING
-  "Choose the type of build, options are: ${all_build_types}."
-  FORCE)
-
-#=================================================
 # Define OS and compiler macros.
 #=================================================
 
@@ -91,6 +64,7 @@ function(add_flags list)
   set(${list} "${${list}} ${flags}" PARENT_SCOPE)
 endfunction()
 
+
 # Add configuration-specific preprocessor definitions.
 function(add_config_definitions configuration)
   get_directory_property(cppdefs COMPILE_DEFINITIONS_${configuration})
@@ -102,13 +76,6 @@ function(add_config_definitions configuration)
     "${cppdefs}")
 endfunction()
 
-#=================================================
-# Use CESM Macros file.
-#=================================================
-
-if("${CMAKE_BUILD_TYPE}" MATCHES CESM)
-  include(${CMAKE_BINARY_DIR}/CESM_Macros.cmake)
-endif()
 
 #=================================================
 # Build flags required to use pFUnit.

@@ -1,6 +1,6 @@
 function( add_mpi_test _testName _testExe _testArgs _numProc )
 
-    if (${PLATFORM} STREQUAL "yellowstone" )
+    if ("${PLATFORM}" STREQUAL "yellowstone" )
         ###
         ### note: no space between -n and num_proc for mpirun.lsf on
         ### yellowstone
