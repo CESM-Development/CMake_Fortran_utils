@@ -102,11 +102,6 @@ if(${CMAKE_Fortran_COMPILER_ID} STREQUAL NAG)
     add_flags(CMAKE_Fortran_FLAGS -colour)
   endif()
 
-  # Add -kind=byte if it isn't anywhere else.
-  if(NOT "${CMAKE_Fortran_FLAGS_${CMAKE_BUILD_TYPE}}" MATCHES -kind=byte)
-    add_flags(CMAKE_Fortran_FLAGS -kind=byte)
-  endif()
-
 elseif(${CMAKE_Fortran_COMPILER_ID} STREQUAL GNU)
   # Turn on warnings, but leave out uninitialized check as it was producing
   # a lot of false positives.

@@ -30,7 +30,11 @@ set(CMAKE_COLOR_MAKEFILE "${USE_COLOR}")
 # Compiler info
 #=================================================
 
-include(Compilers)
+if("${CMAKE_BUILD_TYPE}" MATCHES CESM)
+  include(${CMAKE_BINARY_DIR}/CESM_Macros.cmake)
+else()
+  include(Compilers)
+endif()
 
 #=================================================
 # GenF90
