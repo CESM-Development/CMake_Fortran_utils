@@ -1,4 +1,4 @@
-function( add_mpi_test _testName _testExe _testArgs _numProc )
+function( add_mpi_test _testName _testExe _testArgs _numProc _timeout)
 
     if ("${PLATFORM}" STREQUAL "yellowstone" )
         ###
@@ -22,7 +22,8 @@ function( add_mpi_test _testName _testExe _testArgs _numProc )
         set(MPIEXEC_NPF ${MPIEXEC_NUMPROC_FLAG} ${_numProc})
         set(EXE_CMD ${MPIEXEC} ${MPIEXEC_NPF} ${_testExe} ${_testArgs})
     endif()
-    add_test(NAME ${_testName} COMMAND ${EXE_CMD} )
+    add_test(NAME ${_testName} COMMAND ${EXE_CMD})
+    set_tests_properties(${_testName} PROPERTIES TIMEOUT ${_timeout})
 
 endfunction(add_mpi_test)
 
