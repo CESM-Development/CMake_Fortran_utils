@@ -7,6 +7,17 @@ function( add_mpi_test _testName _testExe _testArgs _numProc )
         ###
         set(MPIEXEC_NPF -n${_numProc})
         set(EXE_CMD ${EXECCA} ${MPIEXEC} ${_testExe} ${_testArgs} ${MPIEXEC_NPF})
+    elseif (${PLATFORM} STREQUAL "cetus" )
+        ###
+        ###
+				#set(PIO_RUNJOB ${CMAKE_BINARY_DIR}/scripts/pio_runjob.sh)
+        set(RUNJOB_NPF --np ${_numProc})
+        if (DEFINED ENV{BGQ_RUNJOB})
+          set(RUNJOB $ENV{BGQ_RUNJOB})
+        else()
+          set(RUNJOB runjob)
+        endif()
+        set(EXE_CMD ${RUNJOB} ${RUNJOB_NPF} : ${_testExe} ${_testArgs})
     else()
         set(MPIEXEC_NPF ${MPIEXEC_NUMPROC_FLAG} ${_numProc})
         set(EXE_CMD ${MPIEXEC} ${MPIEXEC_NPF} ${_testExe} ${_testArgs})
