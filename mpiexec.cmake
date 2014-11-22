@@ -7,7 +7,7 @@ function( add_mpi_test _testName _testExe _testArgs _numProc _timeout)
         ###
         set(MPIEXEC_NPF -n${_numProc})
         set(EXE_CMD ${EXECCA} ${MPIEXEC} ${_testExe} ${_testArgs} ${MPIEXEC_NPF})
-    elseif (${PLATFORM} STREQUAL "cetus" )
+    elseif ("${PLATFORM}" STREQUAL "cetus" )
         ###
         ###
 				#set(PIO_RUNJOB ${CMAKE_BINARY_DIR}/scripts/pio_runjob.sh)
