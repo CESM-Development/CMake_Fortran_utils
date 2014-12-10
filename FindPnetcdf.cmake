@@ -15,6 +15,11 @@ ELSE ()
                HINTS ${PNETCDF_DIR}/lib)
 ENDIF ()
 
+if(NOT ${PNETCDF_LIBRARY})
+  MESSAGE("PNETCDF library not found")
+  return()
+endif()
+
 find_file( PNETCDFTEST NAMES TryPnetcdf_mod.f90  PATHS ${CMAKE_MODULE_PATH} NO_DEFAULT_PATH)
 get_filename_component( CMAKE_TEST_PATH ${PNETCDFTEST} PATH)
 
