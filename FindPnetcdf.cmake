@@ -4,7 +4,7 @@ include(CheckFunctionExists)
 FIND_PATH(PNETCDF_INCLUDE_DIR 
           pnetcdf.h
           HINTS ${PNETCDF_DIR}/include)
-
+MESSAGE("PNETCDF_INCLUDE_DIR: ${PNETCDF_INCLUDE_DIR}")
 IF (${PREFER_SHARED})
   FIND_LIBRARY(PNETCDF_LIBRARY 
                NAMES pnetcdf
@@ -15,7 +15,7 @@ ELSE ()
                HINTS ${PNETCDF_DIR}/lib)
 ENDIF ()
 
-if(NOT ${PNETCDF_LIBRARY})
+if(${PNETCDF_LIBRARY} STREQUAL "PNETCDF_LIBRARY-NOTFOUND")
   MESSAGE("PNETCDF library not found")
   return()
 endif()
