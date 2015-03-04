@@ -7,13 +7,16 @@
 #  NETCDF_Fortran_DEFINITIONS - Compiler switches required for using Netcdf
 #
 include(LibFindMacros)
+
 find_path(NETCDF_Fortran_INCLUDE_DIR
           NAMES netcdf.inc
-          PATHS ${NETCDF_Fortran_PKGCONF_INCLUDE_DIRS})
+          PATHS ${NETCDF_Fortran_PKGCONF_INCLUDE_DIRS}
+          HINTS ${NETCDF_DIR}/include ${NETCDF_Fortran_DIR}/include)
 libfind_package(NETCDF_Fortran NETCDF_C)
 find_library(NETCDF_Fortran_LIBRARY
              NAMES netcdf
-             PATHS ${NETCDF_Fortran_PKGCONF_LIBRARY_DIRS})        
+             PATHS ${NETCDF_Fortran_PKGCONF_LIBRARY_DIRS}
+	     HINTS ${NETCDF_DIR}/lib ${NETCDF_Fortran_DIR}/lib)        
 
 set(NETCDF_Fortran_PROCESS_INCLUDES NETCDF_Fortran_INCLUDE_DIR)
 

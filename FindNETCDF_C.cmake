@@ -10,11 +10,15 @@ include(LibFindMacros)
 set(NETCDF_C_PARALLEL FALSE)
 find_path(NETCDF_C_INCLUDE_DIR
           NAMES netcdf.h
-          PATHS ${NETCDF_C_PKGCONF_INCLUDE_DIRS})
+          PATHS ${NETCDF_C_PKGCONF_INCLUDE_DIRS}
+          HINTS ${NETCDF_DIR}/include ${NETCDF_C_DIR}/include)
+
 # See if netcdf includes parallel support 
 find_path(NETCDF_C_PAR_INCLUDE_DIR
           NAMES netcdf_par.h
-          PATHS ${NETCDF_C_PKGCONF_INCLUDE_DIRS})
+          PATHS ${NETCDF_C_PKGCONF_INCLUDE_DIRS}
+          HINTS ${NETCDF_DIR}/include ${NETCDF_C_DIR}/include)        
+
 set(NETCDF_C_DEFINITIONS "-D_NETCDF")
 if(${NETCDF_C_PAR_INCLUDE_DIR} STREQUAL "NETCDF_C_PAR_INCLUDE_DIR-NOTFOUND")
   MESSAGE("Netcdf library does not appear to have parallel IO support")
@@ -24,7 +28,8 @@ else()
 endif()
 find_library(NETCDF_C_LIBRARY
              NAMES netcdf
-             PATHS ${NETCDF_C_PKGCONF_LIBRARY_DIRS})        
+             PATHS ${NETCDF_C_PKGCONF_LIBRARY_DIRS}
+	     HINTS ${NETCDF_DIR}/lib ${NETCDF_C_DIR}/lib)        
 
 set(NETCDF_C_PROCESS_INCLUDES NETCDF_C_INCLUDE_DIR)
 
