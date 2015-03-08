@@ -27,7 +27,7 @@ else()
   LIST(APPEND NETCDF_C_DEFINITIONS "-D_NETCDF4")
 endif()
 find_library(NETCDF_C_LIBRARY
-             NAMES netcdf
+             NAMES libnetcdf.a netcdf
              PATHS ${NETCDF_C_PKGCONF_LIBRARY_DIRS}
 	     HINTS ${NETCDF_DIR}/lib ${NETCDF_C_DIR}/lib)        
 
