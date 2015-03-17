@@ -11,7 +11,7 @@ function( add_mpi_test _testName _testExe _testArgs _numProc _timeout)
         ###
         ###
 				#set(PIO_RUNJOB ${CMAKE_BINARY_DIR}/scripts/pio_runjob.sh)
-        set(REQUIRED_OPTION --block \$ENV{COBALT_PARTNAME}) 
+        set(REQUIRED_OPTION --block \$ENV{COBALT_PARTNAME} --envs GPFS_COLLMEMPROF=1 --envs GPFSMPIO_NAGG_PSET=16 --envs ROMIO_HINTS=/home/pkcoff/public/romio_hints --envs GPFSMPIO_BALANCECONTIG=1 --envs GPFSMPIO_AGGMETHOD=2 --envs PAMID_TYPED_ONESIDED=1 --envs PAMID_RMA_PENDING=1M --envs GPFSMPIO_BRIDGERINGAGG=1 ) 
         set(RUNJOB_NPF --np ${_numProc})
         if (DEFINED ENV{BGQ_RUNJOB})
           set(RUNJOB $ENV{BGQ_RUNJOB})
