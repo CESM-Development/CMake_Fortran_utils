@@ -1,5 +1,5 @@
 program mpicheck
-  include "mpif.h"
+  use mpi
   integer :: fh, ierr
   
   call mpi_file_open(mpi_comm_world, 'stupid.file',MPI_MODE_RDWR,MPI_INFO_NULL,fh,ierr)

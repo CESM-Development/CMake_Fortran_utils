@@ -3,8 +3,8 @@
 ! Failure to compile means mpi-serial is being used.
 !
 program mpiserial_test
+ use mpi
  implicit none
- include 'mpif.h' 
  integer :: i
  select case(i)
  case(mpi_cart)
